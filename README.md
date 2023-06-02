@@ -129,11 +129,6 @@ won’t export to the OTL form, using `export = FALSE`, and will instead
 print the time card data into the console.
 
 ``` r
-print(path)
-#> [1] "C:/Users/jpayne05/Desktop/Time"
-```
-
-``` r
 tCard <- createTC(file_path = path,
                   categories = catags,
                   daily = dailHours,
@@ -148,9 +143,9 @@ print(tCard)
 #>   <chr>            <chr> <chr> <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #> 1 ENVABE           1     STAF~ ""        7.4   2.4  0      0     0       0     0
 #> 2 ENVEGM5.1.1      990   STAF~ ""        0     0.5  0      0     0       0     0
-#> 3 ENVHOABCPC120    03    STAF~ ""        0     0.9  2.68   1.7   1.8     0     0
-#> 4 ENVIMR001016B00C CWEIY STAF~ ""        0     2.5  3.1    3.5   3.8     0     0
-#> 5 ENVHOABCPC119    02    STAF~ ""        0     1.1  2.3    1.8   1.9     0     0
+#> 3 ENVHOABCPC120    03    STAF~ ""        0     0.6  2.98   1.4   2.1     0     0
+#> 4 ENVIMR001016B00C CWEIY STAF~ ""        0     2.5  3.3    3.5   3.4     0     0
+#> 5 ENVHOABCPC119    02    STAF~ ""        0     1.4  1.8    2.1   2       0     0
 #> 6 ENVHOABCPC123    04    STAF~ ""        0     0    0      0.5   0       0     0
 #> 7 ENVHOABCPC120    01    STAF~ ""        0     0    0      0.5   0       0     0
 #> 8 ENVEGM5.16       010   STAF~ ""        0     0    0      0     0.5     0     0

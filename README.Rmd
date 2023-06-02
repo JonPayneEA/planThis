@@ -112,10 +112,6 @@ weightings <- c(1, 2, 1)
 
 To create the time card use the `createTC()` function. In the case we won't export to the OTL form, using `export = FALSE`, and will instead print the time card data into the console.
 
-```{r}
-print(path)
-```
-
 
 ```{r timecard}
 tCard <- createTC(file_path = path,
