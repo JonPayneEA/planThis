@@ -86,6 +86,23 @@ seconds to do.
 > ***Calendar page on outlook*** ***\>\>*** ***file*** ***\>\>***
 > ***Open & Export*** ***\>\>*** ***Import/Export*** ***\>\>***
 > ***Export to a file*** ***\>\>*** ***Comma Separated Values***
+> ***\>\>*** ***Under your email adress click calendar (pic below)***
+> ***\>\>*** ***Insert Save location*** ***\>\>*** ***Export***
+> ***\>\>*** ***Set Date Range***
+
+<div class="figure" style="text-align: center">
+
+<img src="pics/outlookExport1.png" alt="Outlook calendar export" width="49%" height="20%" /><img src="pics/outlookExport2.png" alt="Outlook calendar export" width="49%" height="20%" />
+
+<p class="caption">
+
+Outlook calendar export
+
+</p>
+
+</div>
+
+<!-- <img src="pics/outlookExport1.png" align="centre" width="350" /> -->
 
 Following installation load the tool with:
 

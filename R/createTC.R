@@ -13,6 +13,12 @@
 #'
 #' @return
 #' @export
+#' @import dplyr
+#' @import lubridate
+#' @import magrittr
+#' @import readr
+#' @import readxl
+#' @import tidyr
 #'
 #' @examples
 #' folder <- 'C:/Users/jpayne05/Desktop/Time'

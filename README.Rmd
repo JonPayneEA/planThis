@@ -74,7 +74,11 @@ Each appointment you wish to have included in time recording requires a category
 
 You will need to export your calendar to use it in the tool, this takes seconds to do.   
 
->  **_Calendar page on outlook_** **_>>_** **_file_** **_>>_** **_Open & Export_** **_>>_** **_Import/Export_** **_>>_** **_Export to a file_** **_>>_** **_Comma Separated Values_**
+>  **_Calendar page on outlook_** **_>>_** **_file_** **_>>_** **_Open & Export_** **_>>_** **_Import/Export_** **_>>_** **_Export to a file_** **_>>_** **_Comma Separated Values_** **_>>_** **_Under your email adress click calendar (pic below)_** **_>>_** **_Insert Save location_** **_>>_** **_Export_** **_>>_** **_Set Date Range_**
+
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Outlook calendar export",fig.show='hold',fig.align='center'}
+knitr::include_graphics(c("pics/outlookExport1.png","pics/outlookExport2.png"))
+``` 
 
 
 Following installation load the tool with:
@@ -83,4 +87,4 @@ Following installation load the tool with:
 library(planThis)
 ```
 
-
+Set your file locations with;
