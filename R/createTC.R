@@ -95,7 +95,7 @@ createTC <- function(file_path = NULL,
         }
     }
   }
-
+# Create a seperate sick and leave time card - add to main one later ~~~~~~~~~~~
   suppressMessages(
     sleaveTC <- sleave %>%
       filter(Type %in% c('Leave', 'Sick', 'Leave Half', 'Sick Half')) %>%
@@ -171,24 +171,31 @@ createTC <- function(file_path = NULL,
              Code, Task, Type)
   )
   # Combine calendar events with leave and sick ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  allTib <- if (dim(sleaveTC)[1] >0 ) rbind(all, sleaveTC)
+  allTib <- if (!is.null(sleaveTC)) {
+    rbind(all, sleaveTC)
+  } else {
+    allTib <- all
+  }
 
   # Identify all day sick or leave
   slRow <- which(allTib$allDay == TRUE &
                    (allTib$dayType == 'Sick' | allTib$dayType == 'Leave') &
                    (allTib$Subject == 'Sick' | allTib$Subject == 'Leave'))
-  sl <- allTib[slRow,]
-  slDates <- sl$Date
-  allTibSL <- allTib %>%
-    # Remove all appointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~~
-    filter(Date != slDates) %>%
-    # Add the sick/ leave back in
-    rbind(sl)
+  if (!is.integer0(slRow)){
+    sl <- allTib[slRow,]
+    slDates <- sl$Date
+    allTibSL <- allTib %>%
+      # Remove all appointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~~
+      filter(Date != slDates) %>%
+      # Add the sick/ leave back in
+      rbind(sl)
+  } else {
+    allTibSL <- allTib
+  }
 
   # Identify all day standard tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   adRow <- which(allTibSL$allDay == TRUE & allTibSL$dayType == 'Standard')
   if (!is.integer0(adRow)){
-    print('meh')
     ad <- allTibSL[adRow,]
     # Find the number of all day tasks per day
     multi <- ad %>%
