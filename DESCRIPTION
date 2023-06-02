@@ -1,0 +1,18 @@
+Package: planThis
+Title: Create time sheets and carry out time recording activities
+Version: 0.0.0.9000
+Authors@R: 
+    person("Jonathan", "Payne", , "jon.payne@environment-agency.gov.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2551-5353"))
+Description: This package is used to link daily time keeping and outlook calendars. Outputs include OTL forms that be loaded onto Oracle systems.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    dplyr,
+    lubridate,
+    magrittr,
+    readr,
+    readxl,
+    tidyr
