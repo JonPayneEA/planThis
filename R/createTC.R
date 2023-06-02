@@ -45,7 +45,6 @@ createTC <- function(file_path = NULL,
                      split = NULL,
                      weight = NULL,
                      export = TRUE) {
-
   # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     catags <- readr::read_csv(paste0(file_path, '/', categories))
@@ -67,26 +66,36 @@ createTC <- function(file_path = NULL,
   )
 
   # Filter by working week ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  row <- which(daily_hours$Date == week & daily_hours$Day == 'Mon')
+  row <- which(daily_hours$Date == week_start & daily_hours$Day == 'Mon')
   if (is.integer0(row))
     warning('Please check the date, it does not match with any Monday')
 
   # Calculate the working week ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Has to start on a Monday
   workWeek <- daily_hours %>%
-    filter(Date >= week & Date <= as.Date(week) + 6)
+    filter(Date >= week_start & Date <= as.Date(week_start) + 6)
 
   # Calculate sick and leave hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   sleave <- workWeek %>%
     mutate(Length = Total)
+
   if (any(c('Leave Half', 'Sick Half') %in% workWeek$Type)){
     sleavehalfR <- which(workWeek$Type == 'Leave Half' |
                            workWeek$Type == 'Sick Half')
-    sleave[sleavehalfR, 8] <- workWeek[sleavehalfR, 7] -
-      as.numeric(difftime(workWeek$End[sleavehalfR],
-                          workWeek$Start[sleavehalfR],
-                          units = 'secs' )/3600)
+    for (i in sleavehalfR) {
+      slhalfhours <- as.numeric(difftime(workWeek$End[sleavehalfR],
+                                         workWeek$Start[sleavehalfR],
+                                         units = 'secs' )/3600)
+      if (slhalfhours > 3.7 & slhalfhours < 7.4) {
+        sleave[sleavehalfR, 8] <-  workWeek[sleavehalfR, 7] - slhalfhours
+      } else if (slhalfhours < 3.7) {
+        sleave[sleavehalfR, 8] <-  workWeek[sleavehalfR, 7] - 3.7
+        } else {
+          warning('Please check the timings in your daily hours spreadsheet')
+        }
+    }
   }
+
   suppressMessages(
     sleaveTC <- sleave %>%
       filter(Type %in% c('Leave', 'Sick', 'Leave Half', 'Sick Half')) %>%
@@ -98,7 +107,7 @@ createTC <- function(file_path = NULL,
       select(-Start, -End, -Lunch, -Description)
   )
 
-  # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     calendar <- readr::read_csv(paste0(file_path, '/', outCal),
                          col_types = cols(`Start Date` =
@@ -120,7 +129,7 @@ createTC <- function(file_path = NULL,
     filter(Categories != 'Ignore & Leave' &
              Categories != 'Duty' &
              !is.na(Categories)) %>%
-    filter(`Start Date` >= week & `Start Date` <= as.Date(week) +6) %>%
+    filter(`Start Date` >= week_start & `Start Date` <= as.Date(week_start) +6) %>%
     mutate(StartDT = as.POSIXct(paste(`Start Date`, `Start Time`))) %>%
     mutate(EndDT = as.POSIXct(paste(`End Date`, `End Time`))) %>%
     mutate(Length = as.numeric(
@@ -145,8 +154,6 @@ createTC <- function(file_path = NULL,
 
   # Unnest the tibble ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy <- tidyr::unnest(calTidy, cols = c(Categories))
-  calTidy
-
 
   # Join calendar and time codes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
@@ -167,45 +174,49 @@ createTC <- function(file_path = NULL,
   allTib <- if (dim(sleaveTC)[1] >0 ) rbind(all, sleaveTC)
 
   # Identify all day sick or leave
-  slRow <- which(allTib$allDay == TRUE & (allTib$dayType == 'Sick' |
-                                            allTib$dayType == 'Leave'))
+  slRow <- which(allTib$allDay == TRUE &
+                   (allTib$dayType == 'Sick' | allTib$dayType == 'Leave') &
+                   (allTib$Subject == 'Sick' | allTib$Subject == 'Leave'))
   sl <- allTib[slRow,]
   slDates <- sl$Date
   allTibSL <- allTib %>%
-    # Remove all appoointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~
+    # Remove all appointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~~
     filter(Date != slDates) %>%
     # Add the sick/ leave back in
     rbind(sl)
 
   # Identify all day standard tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   adRow <- which(allTibSL$allDay == TRUE & allTibSL$dayType == 'Standard')
-  ad <- allTibSL[adRow,]
-  # Find the number of all day tasks per day
-  multi <- ad %>%
-    group_by(Day, Date) %>%
-    count()
-
-  # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  suppressMessages(
-    summary <- allTibSL %>%
-      slice(-adRow) %>%
+  if (!is.integer0(adRow)){
+    print('meh')
+    ad <- allTibSL[adRow,]
+    # Find the number of all day tasks per day
+    multi <- ad %>%
       group_by(Day, Date) %>%
-      summarise(Hours = mean(Total), calTotal = sum(Length)) %>%
-      mutate(Excess = Hours - calTotal)
-  )
+      count()
 
-  # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  suppressMessages(
-    adCor <- ad %>%
-      left_join(multi) %>%
-      left_join(summary) %>%
-      mutate(Length = n * Excess) %>%
-      select(-n, -Hours, - calTotal, - Excess)
-  )
+    # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    suppressMessages(
+      summary <- allTibSL %>%
+        slice(-adRow) %>%
+        group_by(Day, Date) %>%
+        summarise(Hours = mean(Total), calTotal = sum(Length)) %>%
+        mutate(Excess = Hours - calTotal)
+    )
 
+    # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    suppressMessages(
+      adCor <- ad %>%
+        left_join(multi) %>%
+        left_join(summary) %>%
+        mutate(Length = n * Excess) %>%
+        select(-n, -Hours, - calTotal, - Excess)
+    )
   # Merge split times and cleaned sick leave table ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   allTibad <- rbind(allTibSL[-adRow,], adCor)
-
+  } else {
+    allTibad <- allTibSL
+}
   # Add blank Hours type
   allTibad <- allTibad %>%
     mutate(hoursType = rep('', length(Day)))

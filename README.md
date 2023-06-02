@@ -102,10 +102,22 @@ Outlook calendar export
 
 </div>
 
-<!-- <img src="pics/outlookExport1.png" align="centre" width="350" /> -->
-
 Following installation load the tool with:
 
 ``` r
 library(planThis)
+#> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
+#> loading 'planThis'
+```
+
+Set your file locations with;
+
+``` r
+path <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
+catags <- 'Categories_TCs.csv'
+dailHours <- 'Daily_hours.xlsx'
+outlC <- 'calendar_appoints3.csv'
+weekS <- '2023-05-15'
+tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
+weightings <- c(1, 2, 1)
 ```

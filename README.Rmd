@@ -88,3 +88,13 @@ library(planThis)
 ```
 
 Set your file locations with;
+
+```{r files, eval=FALSE}
+path <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
+catags <- 'Categories_TCs.csv'
+dailHours <- 'Daily_hours.xlsx'
+outlC <- 'calendar_appoints3.csv'
+weekS <- '2023-05-15'
+tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
+weightings <- c(1, 2, 1)
+```
