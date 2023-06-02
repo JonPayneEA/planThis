@@ -1,12 +1,8 @@
-library(tidyverse)
-library(readxl)
-library(lubridate)
-
 #' @title Create Time card
 #'
 #' @description Function that links daily hours to outlook calendars to produce an OTL form
 #'
-#' @param file_path Link to folder where time data arte stored
+#' @param file_path Link to folder where time data are stored
 #' @param week_start The week of interest
 #' @param split A selection of projects to split time between
 #' @param weight Weighting factor for each project
@@ -33,11 +29,11 @@ createTC <- function(file_path = NULL,
                      weight = NULL,
                      export = TRUE) {
 
-  # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     catags <- readr::read_csv(paste0(file_path, '/Categories_TCs.csv'))
   )
-
+  # Load daily data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     suppressWarnings(
       daily_hours <- readxl::read_excel(paste0(file_path, '/Daily_hours.xlsx')) %>%
@@ -52,17 +48,18 @@ createTC <- function(file_path = NULL,
         select(-Expected, -Flexi)
     )
   )
-  # Filter by working week ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  # Filter by working week ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   row <- which(daily_hours$Date == week & daily_hours$Day == 'Mon')
   if (is.integer0(row))
     warning('Please check the date, it does not match with any Monday')
 
+  # Calculate the working week ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Has to start on a Monday
   workWeek <- daily_hours %>%
     filter(Date >= week & Date <= as.Date(week) + 6)
 
-  # Calculate sick and leave hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+  # Calculate sick and leave hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   sleave <- workWeek %>%
     mutate(Length = Total)
   if (any(c('Leave Half', 'Sick Half') %in% workWeek$Type)){
@@ -100,8 +97,12 @@ createTC <- function(file_path = NULL,
                                           Mileage = col_skip()))
   )
 
+  # Tidy dates and times about calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Ignore & Leave, Duty and NA categories are filtered out
   calTidy <- calendar %>%
-    filter(Categories != 'Ignore & Leave' & Categories != 'Duty') %>%
+    filter(Categories != 'Ignore & Leave' &
+             Categories != 'Duty' &
+             !is.na(Categories)) %>%
     filter(`Start Date` >= week & `Start Date` <= as.Date(week) +6) %>%
     mutate(StartDT = as.POSIXct(paste(`Start Date`, `Start Time`))) %>%
     mutate(EndDT = as.POSIXct(paste(`End Date`, `End Time`))) %>%
@@ -112,40 +113,40 @@ createTC <- function(file_path = NULL,
     select(Date, Subject, Categories, StartDT, EndDT, Length,
            allDay = `All day event`)
 
-  # Fix dates of all day events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Fix dates of all day events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy$Date <- as.Date(ifelse(calTidy$allDay == TRUE,
                                  calTidy$Date + 1,
                                  calTidy$Date),
                           origin="1970-01-01")
 
-  # Coerce multiple time codes to a list ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Coerce multiple time codes to a list ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy$Categories <- as.list(strsplit(calTidy$Categories, ';'))
   calTidy$codes <- lengths(calTidy$Categories)
 
-  # Divide time by length of list (no of time codes) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Divide time by length of list (no of time codes) ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy$Length <- calTidy$Length / calTidy$codes
 
-  # Unnest the tibble ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Unnest the tibble ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy <- tidyr::unnest(calTidy, cols = c(Categories))
   calTidy
 
 
-  # Join calendar and time codes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Join calendar and time codes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     calCodes <- calTidy %>%
       left_join(catags, by = 'Categories')
   )
 
-  # Join the above to the daily hours  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Join the above to the daily hours  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     all <- workWeek %>%
       rename(dayType = Type) %>%
       full_join(calCodes, by = 'Date') %>%
       # colnames()
-      select(Day, Date, dayType, Subject, Categories, Total, Length, allDay, Code,
-             Task, Type)
+      select(Day, Date, dayType, Subject, Categories, Total, Length, allDay,
+             Code, Task, Type)
   )
-  # Combine calendar events with leave and sick ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Combine calendar events with leave and sick ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   allTib <- if (dim(sleaveTC)[1] >0 ) rbind(all, sleaveTC)
 
   # Identify all day sick or leave
@@ -154,25 +155,20 @@ createTC <- function(file_path = NULL,
   sl <- allTib[slRow,]
   slDates <- sl$Date
   allTibSL <- allTib %>%
-    # Remove all appoointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~~~
+    # Remove all appoointments on the dates of leave / sick ~~~~~~~~~~~~~~~~~~~~
     filter(Date != slDates) %>%
     # Add the sick/ leave back in
     rbind(sl)
 
-  # Remove all day events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Find calendar totals ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Subtract from daily ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Change all day to excess hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  # Identify all day standard tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Identify all day standard tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   adRow <- which(allTibSL$allDay == TRUE & allTibSL$dayType == 'Standard')
   ad <- allTibSL[adRow,]
-  # Find the number of all day tasks
+  # Find the number of all day tasks per day
   multi <- ad %>%
     group_by(Day, Date) %>%
     count()
 
-  # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     summary <- allTibSL %>%
       slice(-adRow) %>%
@@ -181,7 +177,7 @@ createTC <- function(file_path = NULL,
       mutate(Excess = Hours - calTotal)
   )
 
-  # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     adCor <- ad %>%
       left_join(multi) %>%
@@ -190,15 +186,15 @@ createTC <- function(file_path = NULL,
       select(-n, -Hours, - calTotal, - Excess)
   )
 
-  # Merge split times and cleaned sick leave table ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Merge split times and cleaned sick leave table ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   allTibad <- rbind(allTibSL[-adRow,], adCor)
 
   # Add blank Hours type
   allTibad <- allTibad %>%
     mutate(hoursType = rep('', length(Day)))
 
-  # Find the remaining excess hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Hours multiplied by 10 to improve distribution ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Find the remaining excess hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Hours multiplied by 10 to improve distribution ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     finalSum <- allTibad %>%
       group_by(Day, Date, dayType) %>%
@@ -207,7 +203,7 @@ createTC <- function(file_path = NULL,
       filter(Excess > 0)
   )
 
-  # What categories divide across and how to weight them ~~~~~~~~~~~~~~~~~~~~~~~~~
+  # What categories divide across and how to weight them ~~~~~~~~~~~~~~~~~~~~~~~
 
   cats <- rep(split, times = weight)
   catL <- length(cats)
