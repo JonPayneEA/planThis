@@ -3,6 +3,9 @@
 #' @description Function that links daily hours to outlook calendars to produce an OTL form
 #'
 #' @param file_path Link to folder where time data are stored
+#' @param categories File name of your categories file (csv)
+#' @param daily File name of your daily hours (xlsx)
+#' @param outCal Outlook export file (csv)
 #' @param week_start The week of interest
 #' @param split A selection of projects to split time between
 #' @param weight Weighting factor for each project
@@ -13,17 +16,25 @@
 #'
 #' @examples
 #' folder <- 'C:/Users/jpayne05/Desktop/Time'
+#' categories <- 'Categories_TCs.csv'
+#' daily <- 'Daily_hours.xlsx'
+#' outCal <- 'calendar_appoints3.csv'
 #' week <- '2023-05-15'
 #' tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 #' weightings <- c(1, 2, 1)
-#'
 #' tc <- createTC(file_path = folder,
+#'                categories = categories,
+#'                daily = daily,
+#'                outCal = outCal,
 #'                week_start = week,
 #'                split = tasks,
 #'                weight = weightings,
 #'                export = FALSE)
-#'
+#' tc
 createTC <- function(file_path = NULL,
+                     categories = NULL,
+                     daily = NULL,
+                     outCal = NULL,
                      week_start = NULL,
                      split = NULL,
                      weight = NULL,
@@ -31,12 +42,12 @@ createTC <- function(file_path = NULL,
 
   # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
-    catags <- readr::read_csv(paste0(file_path, '/Categories_TCs.csv'))
+    catags <- readr::read_csv(paste0(file_path, '/', categories))
   )
   # Load daily data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     suppressWarnings(
-      daily_hours <- readxl::read_excel(paste0(file_path, '/Daily_hours.xlsx')) %>%
+      daily_hours <- readxl::read_excel(paste0(file_path, '/', daily)) %>%
         mutate(Date = as.Date(Date)) %>%
         mutate_at(vars(Start, End), toTime) %>%
         mutate(Start = ifelse(is.na(Start), NA, paste(Date, Start))) %>%
@@ -83,7 +94,7 @@ createTC <- function(file_path = NULL,
 
   # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
-    calendar <- readr::read_csv(paste0(file_path, '/calendar_appoints3.csv'),
+    calendar <- readr::read_csv(paste0(file_path, '/', outCal),
                          col_types = cols(`Start Date` =
                                             col_date(format = "%d/%m/%Y"),
                                           `End Date` =

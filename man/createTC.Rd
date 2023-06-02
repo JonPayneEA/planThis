@@ -6,6 +6,9 @@
 \usage{
 createTC(
   file_path = NULL,
+  categories = NULL,
+  daily = NULL,
+  outCal = NULL,
   week_start = NULL,
   split = NULL,
   weight = NULL,
@@ -13,7 +16,13 @@ createTC(
 )
 }
 \arguments{
-\item{file_path}{Link to folder where time data arte stored}
+\item{file_path}{Link to folder where time data are stored}
+
+\item{categories}{File name of your categories file (csv)}
+
+\item{daily}{File name of your daily hours (xlsx)}
+
+\item{outCal}{Outlook export file (csv)}
 
 \item{week_start}{The week of interest}
 
@@ -31,14 +40,19 @@ Function that links daily hours to outlook calendars to produce an OTL form
 }
 \examples{
 folder <- 'C:/Users/jpayne05/Desktop/Time'
+categories <- 'Categories_TCs.csv'
+daily <- 'Daily_hours.xlsx'
+outCal <- 'calendar_appoints3.csv'
 week <- '2023-05-15'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
-
 tc <- createTC(file_path = folder,
+               categories = categories,
+               daily = daily,
+               outCal = outCal,
                week_start = week,
                split = tasks,
                weight = weightings,
                export = FALSE)
-
+tc
 }
