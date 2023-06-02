@@ -9,7 +9,8 @@
 
 The goal of planThis is to simplify time keeping in the EA. It uses
 categorised outlook appointments to create time cards weighted against
-free time and daily hours.
+free time and daily hours. Outputs are suitable for Oracle
+implementation.
 
 ## Installation
 
