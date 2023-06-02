@@ -80,6 +80,7 @@ You will need to export your calendar to use it in the tool, this takes seconds 
 knitr::include_graphics(c("pics/outlookExport1.png","pics/outlookExport2.png"))
 ``` 
 
+## Running planThis
 
 Following installation load the tool with:
 
@@ -98,3 +99,48 @@ weekS <- '2023-05-15'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
 ```
+
+```{r real paths, echo = FALSE}
+path <- 'C:/Users/jpayne05/Desktop/Time'
+catags <- 'Categories_TCs.csv'
+dailHours <- 'Daily_hours.xlsx'
+outlC <- 'calendar_appoints3.csv'
+weekS <- '2023-05-15'
+tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
+weightings <- c(1, 2, 1)
+```
+
+To create the time card use the `createTC()` function. In the case we won't export to the OTL form, using `export = FALSE`, and will instead print the time card data into the console.
+
+```{r}
+print(path)
+```
+
+
+```{r timecard}
+tCard <- createTC(file_path = path,
+                  categories = catags,
+                  daily = dailHours,
+                  outCal = outlC,
+                  week_start = weekS,
+                  split = tasks,
+                  weight = weightings,
+                  export = FALSE)
+print(tCard)
+```
+
+When `export = TRUE` your OTL form will export into the `file_path` location of the format OTL_*`week_start`*. In the example below the exported file is **OTL_2023-05-15**
+
+```{r otl, eval = FALSE}
+tCard <- createTC(file_path = path,
+                  categories = catags,
+                  daily = dailHours,
+                  outCal = outlC,
+                  week_start = weekS,
+                  split = tasks,
+                  weight = weightings,
+                  export = TRUE)
+```
+
+<img src="pics/OTL.PNG" align="centre" width="700" />
+

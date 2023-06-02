@@ -102,6 +102,8 @@ Outlook calendar export
 
 </div>
 
+## Running planThis
+
 Following installation load the tool with:
 
 ``` r
@@ -121,3 +123,53 @@ weekS <- '2023-05-15'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
 ```
+
+To create the time card use the `createTC()` function. In the case we
+won’t export to the OTL form, using `export = FALSE`, and will instead
+print the time card data into the console.
+
+``` r
+print(path)
+#> [1] "C:/Users/jpayne05/Desktop/Time"
+```
+
+``` r
+tCard <- createTC(file_path = path,
+                  categories = catags,
+                  daily = dailHours,
+                  outCal = outlC,
+                  week_start = weekS,
+                  split = tasks,
+                  weight = weightings,
+                  export = FALSE)
+print(tCard)
+#> # A tibble: 8 x 11
+#>   Code             Task  Type  hours~1   Mon   Tue   Wed   Thu   Fri   Sat   Sun
+#>   <chr>            <chr> <chr> <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 ENVABE           1     STAF~ ""        7.4   2.4  0      0     0       0     0
+#> 2 ENVEGM5.1.1      990   STAF~ ""        0     0.5  0      0     0       0     0
+#> 3 ENVHOABCPC120    03    STAF~ ""        0     0.9  2.68   1.7   1.8     0     0
+#> 4 ENVIMR001016B00C CWEIY STAF~ ""        0     2.5  3.1    3.5   3.8     0     0
+#> 5 ENVHOABCPC119    02    STAF~ ""        0     1.1  2.3    1.8   1.9     0     0
+#> 6 ENVHOABCPC123    04    STAF~ ""        0     0    0      0.5   0       0     0
+#> 7 ENVHOABCPC120    01    STAF~ ""        0     0    0      0.5   0       0     0
+#> 8 ENVEGM5.16       010   STAF~ ""        0     0    0      0     0.5     0     0
+#> # ... with abbreviated variable name 1: hoursType
+```
+
+When `export = TRUE` your OTL form will export into the `file_path`
+location of the format OTL\_*`week_start`*. In the example below the
+exported file is **OTL\_2023-05-15**
+
+``` r
+tCard <- createTC(file_path = path,
+                  categories = catags,
+                  daily = dailHours,
+                  outCal = outlC,
+                  week_start = weekS,
+                  split = tasks,
+                  weight = weightings,
+                  export = TRUE)
+```
+
+<img src="pics/OTL.PNG" align="centre" width="700" />
