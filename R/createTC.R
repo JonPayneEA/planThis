@@ -98,8 +98,9 @@ createTC <- function(file_path = NULL,
 # Create a seperate sick and leave time card - add to main one later ~~~~~~~~~~~
   suppressMessages(
     sleaveTC <- sleave %>%
-      filter(Type %in% c('Leave', 'Sick', 'Leave Half', 'Sick Half')) %>%
-      mutate(allDay = ifelse(Length == 7.4, TRUE, FALSE)) %>%
+      filter(Type %in% c('Leave', 'Sick', 'Leave Half', 'Sick Half',
+                         'Bank Holiday')) %>%
+      mutate(allDay = ifelse(Length == 7.4 | Length == 0, TRUE, FALSE)) %>%
       rename(dayType = Type) %>%
       left_join(catags, by = c('dayType' = 'Categories')) %>%
       mutate(Subject = dayType, Categories = dayType) %>%
@@ -170,17 +171,21 @@ createTC <- function(file_path = NULL,
       select(Day, Date, dayType, Subject, Categories, Total, Length, allDay,
              Code, Task, Type)
   )
+
   # Combine calendar events with leave and sick ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   allTib <- if (!is.null(sleaveTC)) {
-    rbind(all, sleaveTC)
+    allTib <- rbind(all, sleaveTC)
   } else {
     allTib <- all
   }
 
   # Identify all day sick or leave
   slRow <- which(allTib$allDay == TRUE &
-                   (allTib$dayType == 'Sick' | allTib$dayType == 'Leave') &
-                   (allTib$Subject == 'Sick' | allTib$Subject == 'Leave'))
+                   ((allTib$dayType == 'Sick' & allTib$Subject == 'Sick') |
+                      (allTib$dayType == 'Leave' & allTib$Subject == 'Leave') |
+                      (allTib$dayType == 'Bank Holiday' &
+                         allTib$Subject == 'Bank Holiday')))
+
   if (!is.integer0(slRow)){
     sl <- allTib[slRow,]
     slDates <- sl$Date
@@ -202,7 +207,7 @@ createTC <- function(file_path = NULL,
       group_by(Day, Date) %>%
       count()
 
-    # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     suppressMessages(
       summary <- allTibSL %>%
         slice(-adRow) %>%
@@ -211,7 +216,7 @@ createTC <- function(file_path = NULL,
         mutate(Excess = Hours - calTotal)
     )
 
-    # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     suppressMessages(
       adCor <- ad %>%
         left_join(multi) %>%
@@ -224,9 +229,16 @@ createTC <- function(file_path = NULL,
   } else {
     allTibad <- allTibSL
 }
-  # Add blank Hours type
-  allTibad <- allTibad %>%
-    mutate(hoursType = rep('', length(Day)))
+
+  # Convert no calendar event days to Length 0 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Stops the days being removed in next steps
+
+  naRow <- which(allTibad$dayType== 'Standard' &
+                 is.na(allTibad$Categories) &
+                   is.na(allTibad$Length))
+  if (!is.integer0(naRow)) {
+    allTibad$Length[naRow] <- 0
+  }
 
   # Find the remaining excess hours ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Hours multiplied by 10 to improve distribution ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -239,10 +251,10 @@ createTC <- function(file_path = NULL,
   )
 
   # What categories divide across and how to weight them ~~~~~~~~~~~~~~~~~~~~~~~
-
   cats <- rep(split, times = weight)
   catL <- length(cats)
 
+  # Pad hours using multinormal distribution ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   multinom <- list()
   for (i in seq_along(finalSum$Day)){
     multinom[[i]] <- rmultinom(n = 1,
@@ -261,10 +273,12 @@ createTC <- function(file_path = NULL,
 
   catPad <- padding %>%
     left_join(catags, by = 'Categories') %>%
-    select(-Description) %>%
-    mutate(hoursType = rep('', length(Day)))
+    select(-Description)
+
 
   fin <- rbind(allTibad, catPad)
+  fin <- fin %>%
+    mutate(hoursType = rep('', length(Day)))
 
   ts <- fin %>%
     arrange(., Date) %>%
@@ -303,6 +317,8 @@ createTC <- function(file_path = NULL,
     tsMat <- as.matrix(ts)
     matrows <- length(tsMat[,1])
     neo[30:(29 + matrows), 1:11] <- tsMat
+    # Adding an ' infront of taks, when exporting to csv leading zeros get dropped
+    neo[30:(29 + matrows), 2] <- paste0("'",  neo[30:(29 + matrows), 2])
     neo[29, 12] <- 'END_COLUMN'
 
     newRow <- 30 + matrows + 2
@@ -322,6 +338,7 @@ createTC <- function(file_path = NULL,
                 row.names = FALSE,
                 col.names = FALSE,
                 sep = ",")
+    cat('\n Calendar for week commencing', week_start, 'saved at:', file_path, '\n')
   }
   return(ts)
 }
