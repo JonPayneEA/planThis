@@ -318,7 +318,7 @@ createTC <- function(file_path = NULL,
     matrows <- length(tsMat[,1])
     neo[30:(29 + matrows), 1:11] <- tsMat
     # Adding an ' infront of taks, when exporting to csv leading zeros get dropped
-    neo[30:(29 + matrows), 2] <- paste0("'",  neo[30:(29 + matrows), 2])
+    # neo[30:(29 + matrows), 2] <- paste0("'",  neo[30:(29 + matrows), 2])
     neo[29, 12] <- 'END_COLUMN'
 
     newRow <- 30 + matrows + 2
@@ -338,7 +338,8 @@ createTC <- function(file_path = NULL,
                 row.names = FALSE,
                 col.names = FALSE,
                 sep = ",")
-    cat('\n Calendar for week commencing', week_start, 'saved at:', file_path, '\n')
+    print(paste0(file_path, '/', 'OTL_', week_start, '.csv'))
+    cat('Source OTL form written to', file_path, '\n')
   }
   return(ts)
 }
