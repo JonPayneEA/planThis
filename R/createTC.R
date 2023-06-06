@@ -19,6 +19,7 @@
 #' @import readr
 #' @import readxl
 #' @import tidyr
+#' @import tibble
 #'
 #' @examples
 #' folder <- 'C:/Users/jpayne05/Desktop/Time'
@@ -339,7 +340,7 @@ createTC <- function(file_path = NULL,
                 col.names = FALSE,
                 sep = ",")
     print(paste0(file_path, '/', 'OTL_', week_start, '.csv'))
-    cat('Source OTL form written to', file_path, '\n')
+    cat('\nSource OTL form written to', file_path, '\n')
   }
   return(ts)
 }
