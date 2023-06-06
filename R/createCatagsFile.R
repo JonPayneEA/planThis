@@ -33,12 +33,18 @@ createCatagsFile <- function(path = NULL){
             NA,	'03',	'902',	'901')
   Type <- rep('STAFF Plain Time-Straight Time', times = length(Categories))
   tib <- tibble::tibble(Categories, Description, Code, Task, Type)
+
+  # Stop overwriting of categories.csv file
+  files <- list.files(path)
+  if ('Categories.csv' %in% files){
+    stop('Categories.csv already exists in this location')
+  }
   write.table(tib,
-              file = paste0(path, '/Categoriess.csv'),
+              file = paste0(path, '/Categories.csv'),
               row.names = FALSE,
               col.names = TRUE,
               sep = ",")
-  print(paste0(path, '/Categoriess.csv'))
+  print(paste0(path, '/Categories.csv'))
   cat('\nSource Categories file written to', path, '\n')
 }
 
