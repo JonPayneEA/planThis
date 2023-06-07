@@ -356,6 +356,7 @@ createTC <- function(categories = NULL,
     neo[(newRow + 10), 2] <- 'END'
     # For clarity replace - with _ for file export
     weekUC <- gsub('-', '_', week_start)
+    # Export OTL form
     write.table(neo,
                 file = paste0(pathOTL, 'OTL_wc_', weekUC, '.csv'),
                 row.names = FALSE,
