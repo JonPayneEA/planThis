@@ -358,7 +358,7 @@ createTC <- function(categories = NULL,
     weekUC <- gsub('-', '_', week_start)
     # Export OTL form
     write.table(neo,
-                file = paste0(pathOTL, 'OTL_wc_', weekUC, '.csv'),
+                file = paste0(pathOTL, '/', 'OTL_wc_', weekUC, '.csv'),
                 row.names = FALSE,
                 col.names = FALSE,
                 sep = ",")
