@@ -2,14 +2,14 @@
 #'
 #' @description Function that links daily hours to outlook calendars to produce an OTL form
 #'
-#' @param file_path Link to folder where time data are stored
-#' @param categories File name of your categories file (csv)
-#' @param daily File name of your daily hours (xlsx)
-#' @param outCal Outlook export file (csv)
+#' @param categories Link to your categories file (csv)
+#' @param daily Link to your daily hours (xlsx)
+#' @param outCal Link to your Outlook export file (csv)
 #' @param week_start The week of interest
 #' @param split A selection of projects to split time between
 #' @param weight Weighting factor for each project
-#' @param export Set as True - saves the OTL form in your file_path folder
+#' @param pathOTL Link to folder where you wish the OTL data to be exported to
+#' @param export Set as True - saves the OTL form in your pathOTL folder
 #'
 #' @return
 #' @export
@@ -22,29 +22,29 @@
 #' @import tibble
 #'
 #' @examples
-#' folder <- 'C:/Users/jpayne05/Desktop/Time'
-#' categories <- 'Categories_TCs.csv'
-#' daily <- 'Daily_hours.xlsx'
-#' outCal <- 'calendar_appoints3.csv'
-#' week <- '2023-05-15'
+#' catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
+#' dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
+#' outlC <- 'C:/Users/jpayne05/Desktop/Time/calendar_appoints3.csv'
+#' weekS <- '2023-05-22'
+#' pathOTL <- 'C:/Users/jpayne05/Desktop/Time'
 #' tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 #' weightings <- c(1, 2, 1)
-#' tc <- createTC(file_path = folder,
-#'                categories = categories,
+#' tc <- createTC(categories = categories,
 #'                daily = daily,
 #'                outCal = outCal,
 #'                week_start = week,
 #'                split = tasks,
 #'                weight = weightings,
+#'                file_path = folder,
 #'                export = FALSE)
 #' tc
-createTC <- function(file_path = NULL,
-                     categories = NULL,
+createTC <- function(categories = NULL,
                      daily = NULL,
                      outCal = NULL,
                      week_start = NULL,
                      split = NULL,
                      weight = NULL,
+                     pathOTL = NULL,
                      export = TRUE) {
   if (is.null(week_start)) {
     recMons <- rev(getRecentMondays())
@@ -61,12 +61,19 @@ createTC <- function(file_path = NULL,
   }
   # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
-    catags <- readr::read_csv(paste0(file_path, '/', categories))
+    catags <- readr::read_csv(paste0(categories))
   )
+
+  # Check tasks do they math the categories file ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (all(tasks %in% catags$Categories)) {
+    cat('\nAll tasks match the Categories file\n')
+  } else {
+    stop('The submitted tasks do not match Categories file, please check both inputs')
+  }
   # Load daily data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     suppressWarnings(
-      daily_hours <- readxl::read_excel(paste0(file_path, '/', daily)) %>%
+      daily_hours <- readxl::read_excel(paste0(daily)) %>%
         mutate(Date = as.Date(Date)) %>%
         mutate_at(vars(Start, End), toTime) %>%
         mutate(Start = ifelse(is.na(Start), NA, paste(Date, Start))) %>%
@@ -124,7 +131,7 @@ createTC <- function(file_path = NULL,
 
   # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
-    calendar <- readr::read_csv(paste0(file_path, '/', outCal),
+    calendar <- readr::read_csv(paste0(outCal),
                          col_types = cols(`Start Date` =
                                             col_date(format = "%d/%m/%Y"),
                                           `End Date` =
@@ -347,13 +354,15 @@ createTC <- function(file_path = NULL,
                                           'NO_HEADER',
                                           'STOP_ORACLE')
     neo[(newRow + 10), 2] <- 'END'
+    # For clarity replace - with _ for file export
+    weekUC <- gsub('-', '_', week_start)
     write.table(neo,
-                file = paste0(file_path, '/', 'OTL_', week_start, '.csv'),
+                file = paste0(pathOTL, 'OTL_wc_', weekUC, '.csv'),
                 row.names = FALSE,
                 col.names = FALSE,
                 sep = ",")
-    print(paste0(file_path, '/', 'OTL_', week_start, '.csv'))
-    cat('\nSource OTL form written to', file_path, '\n')
+    print(paste0(pathOTL, '/', 'OTL_wc_', weekUC, '.csv'))
+    cat('Source OTL form written to', pathOTL, '\n')
   }
   return(ts)
 }

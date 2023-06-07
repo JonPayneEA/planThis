@@ -5,24 +5,22 @@
 \title{Create Time card}
 \usage{
 createTC(
-  file_path = NULL,
   categories = NULL,
   daily = NULL,
   outCal = NULL,
   week_start = NULL,
   split = NULL,
   weight = NULL,
+  pathOTL = NULL,
   export = TRUE
 )
 }
 \arguments{
-\item{file_path}{Link to folder where time data are stored}
+\item{categories}{Link to your categories file (csv)}
 
-\item{categories}{File name of your categories file (csv)}
+\item{daily}{Link to your daily hours (xlsx)}
 
-\item{daily}{File name of your daily hours (xlsx)}
-
-\item{outCal}{Outlook export file (csv)}
+\item{outCal}{Link to your Outlook export file (csv)}
 
 \item{week_start}{The week of interest}
 
@@ -30,7 +28,9 @@ createTC(
 
 \item{weight}{Weighting factor for each project}
 
-\item{export}{Set as True - saves the OTL form in your file_path folder}
+\item{pathOTL}{Link to folder where you wish the OTL data to be exported to}
+
+\item{export}{Set as True - saves the OTL form in your pathOTL folder}
 }
 \value{
 
@@ -39,20 +39,20 @@ createTC(
 Function that links daily hours to outlook calendars to produce an OTL form
 }
 \examples{
-folder <- 'C:/Users/jpayne05/Desktop/Time'
-categories <- 'Categories_TCs.csv'
-daily <- 'Daily_hours.xlsx'
-outCal <- 'calendar_appoints3.csv'
-week <- '2023-05-15'
+catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
+dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
+outlC <- 'C:/Users/jpayne05/Desktop/Time/calendar_appoints3.csv'
+weekS <- '2023-05-22'
+pathOTL <- 'C:/Users/jpayne05/Desktop/Time'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
-tc <- createTC(file_path = folder,
-               categories = categories,
+tc <- createTC(categories = categories,
                daily = daily,
                outCal = outCal,
                week_start = week,
                split = tasks,
                weight = weightings,
+               file_path = folder,
                export = FALSE)
 tc
 }
