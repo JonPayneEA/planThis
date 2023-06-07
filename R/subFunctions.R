@@ -57,3 +57,20 @@ toHMS <- function(x, na.rm = FALSE){
 toHours <- function(x, na.rm = FALSE){
   (as.numeric(period_to_seconds(x) / 3600))
 }
+
+
+#' @title Get recent Mondays
+#'
+#' @description This function looks back over the past 70 days and draws out dates that fall on Monday.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' getRecentMondays()
+getRecentMondays <- function(){
+  daysR <- seq(as.Date(Sys.Date()-70), by = "day", length.out = 70)
+  days <- as.POSIXlt(daysR, format = '%Y-%j')
+  mons <- days[days$wday==1]
+  as.Date(mons[!is.na(mons)])
+}

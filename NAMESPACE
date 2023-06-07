@@ -2,6 +2,7 @@
 
 export(createCatagsFile)
 export(createTC)
+export(getRecentMondays)
 export(is.integer0)
 export(toHMS)
 export(toHours)

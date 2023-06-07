@@ -46,6 +46,19 @@ createTC <- function(file_path = NULL,
                      split = NULL,
                      weight = NULL,
                      export = TRUE) {
+  if (is.null(week_start)) {
+    recMons <- rev(getRecentMondays())
+    if (Sys.Date() - recMons[1] < 7) {
+      # Find first date smaller more than 7 days ago
+      # This should always be last week
+      posit <- which(Sys.Date() - recMons  > 7, recMons)[1]
+      week_start <- recMons[posit]
+      cat('Week commencing', as.character(week_start), 'used\n')
+    } else {
+      week_start <- recMons[1]
+      cat('Week commencing', as.character(week_start), 'used\n')
+    }
+  }
   # Load category data  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   suppressMessages(
     catags <- readr::read_csv(paste0(file_path, '/', categories))
