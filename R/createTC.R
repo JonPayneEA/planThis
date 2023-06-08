@@ -130,36 +130,55 @@ createTC <- function(categories = NULL,
   )
 
   # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  suppressMessages(
-    calendar <- readr::read_csv(paste0(outCal),
-                         col_types = cols(`Start Date` =
-                                            col_date(format = "%d/%m/%Y"),
-                                          `End Date` =
-                                            col_date(format = "%d/%m/%Y"),
-                                          `Reminder Date` = col_skip(),
-                                          `Reminder Time` = col_skip(),
-                                          `Optional Attendees` = col_skip(),
-                                          `Meeting Resources` = col_skip(),
-                                          `Billing Information` = col_skip(),
-                                          Location = col_skip(),
-                                          Mileage = col_skip()))
-  )
+  # If .xlsx likely exported via Power Automate ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # If .csv likely exported from outlook ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (grep('.xlsx', basename(calexcel))) {
+    calendar <- readxl::read_excel(calexcel)
+    calTidy <- calendar %>%
+      filter(Categories != 'Ignore & Leave' &
+               Categories != 'Duty' &
+               !is.na(Categories)) %>%
+      mutate(Date = as.Date(`Start Time`)) %>%
+      mutate(StartDT = as.POSIXct(`Start Time`, tz = "UTC", "%Y-%m-%dT%H:%M:%OS")) %>%
+      mutate(EndDT = as.POSIXct(`End Time`, tz = "UTC", "%Y-%m-%dT%H:%M:%OS")) %>%
+      mutate(Length = as.numeric(
+        difftime(EndDT, StartDT, units ='secs')
+        /3600)) %>%
+      select(Date, Subject = Event, Categories, StartDT, EndDT, Length, allDay)
 
-  # Tidy dates and times about calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Ignore & Leave, Duty and NA categories are filtered out
-  calTidy <- calendar %>%
-    filter(Categories != 'Ignore & Leave' &
-             Categories != 'Duty' &
-             !is.na(Categories)) %>%
-    filter(`Start Date` >= week_start & `Start Date` <= as.Date(week_start) +6) %>%
-    mutate(StartDT = as.POSIXct(paste(`Start Date`, `Start Time`))) %>%
-    mutate(EndDT = as.POSIXct(paste(`End Date`, `End Time`))) %>%
-    mutate(Length = as.numeric(
-      difftime(EndDT, StartDT, units ='secs')
-      /3600)) %>%
-    mutate(Date = as.Date(StartDT)) %>%
-    select(Date, Subject, Categories, StartDT, EndDT, Length,
-           allDay = `All day event`)
+  } else {
+
+    suppressMessages(
+      calendar <- readr::read_csv(paste0(outCal),
+                                  col_types = cols(`Start Date` =
+                                                     col_date(format = "%d/%m/%Y"),
+                                                   `End Date` =
+                                                     col_date(format = "%d/%m/%Y"),
+                                                   `Reminder Date` = col_skip(),
+                                                   `Reminder Time` = col_skip(),
+                                                   `Optional Attendees` = col_skip(),
+                                                   `Meeting Resources` = col_skip(),
+                                                   `Billing Information` = col_skip(),
+                                                   Location = col_skip(),
+                                                   Mileage = col_skip()))
+    )
+
+    # Tidy dates and times about calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Ignore & Leave, Duty and NA categories are filtered out
+    calTidy <- calendar %>%
+      filter(Categories != 'Ignore & Leave' &
+               Categories != 'Duty' &
+               !is.na(Categories)) %>%
+      filter(`Start Date` >= week_start & `Start Date` <= as.Date(week_start) +6) %>%
+      mutate(StartDT = as.POSIXct(paste(`Start Date`, `Start Time`))) %>%
+      mutate(EndDT = as.POSIXct(paste(`End Date`, `End Time`))) %>%
+      mutate(Length = as.numeric(
+        difftime(EndDT, StartDT, units ='secs')
+        /3600)) %>%
+      mutate(Date = as.Date(StartDT)) %>%
+      select(Date, Subject, Categories, StartDT, EndDT, Length,
+             allDay = `All day event`)
+  }
 
   # Fix dates of all day events ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   calTidy$Date <- as.Date(ifelse(calTidy$allDay == TRUE,
