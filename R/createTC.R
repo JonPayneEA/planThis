@@ -132,8 +132,8 @@ createTC <- function(categories = NULL,
   # Import calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # If .xlsx likely exported via Power Automate ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # If .csv likely exported from outlook ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (grep('.xlsx', basename(calexcel))) {
-    calendar <- readxl::read_excel(calexcel)
+  if (grep('.xlsx', basename(outCal))) {
+    calendar <- readxl::read_excel(outCal)
     calTidy <- calendar %>%
       filter(Categories != 'Ignore & Leave' &
                Categories != 'Duty' &
