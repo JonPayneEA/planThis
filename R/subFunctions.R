@@ -34,6 +34,8 @@ toTime <- function(x, na.rm = FALSE){
 #' @param x Data of interest
 #' @param na.rm Set as TRUE
 #'
+#' @importFrom lubridate hms
+#'
 #' @return
 #' @export
 #'
@@ -48,6 +50,8 @@ toHMS <- function(x, na.rm = FALSE){
 #'
 #' @param x Data of interest
 #' @param na.rm Set as TRUE
+#'
+#' @importFrom lubridate period_to_seconds
 #'
 #' @return
 #' @export

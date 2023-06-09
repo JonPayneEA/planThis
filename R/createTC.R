@@ -13,13 +13,29 @@
 #'
 #' @return
 #' @export
-#' @import dplyr
-#' @import lubridate
-#' @import magrittr
-#' @import readr
-#' @import readxl
-#' @import tidyr
+#'
 #' @import tibble
+#' @importFrom magrittr %>%
+#' @importFrom lubridate hms
+#' @importFrom lubridate period_to_seconds
+#' @importFrom readr read_csv
+#' @importFrom readxl read_excel
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate_at
+#' @importFrom dplyr left_join
+#' @importFrom dplyr rename
+#' @importFrom dplyr relocate
+#' @importFrom dplyr full_join
+#' @importFrom dplyr summarise
+#' @importFrom dplyr group_by
+#' @importFrom dplyr arrange
+#' @importFrom dplyr coalesce
+#' @importFrom dplyr vars
+#' @importFrom dplyr slice
+#' @importFrom tidyr unnest
+#' @importFrom tidyr pivot_wider
 #'
 #' @examples
 #' catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
@@ -241,7 +257,7 @@ createTC <- function(categories = NULL,
       summary <- workWeek %>%
         select(Day, Date, Type, Total) %>%
         left_join(calHours) %>%
-        mutate_if(is.numeric,coalesce,0) %>% # Converts NAs in matches to 0
+        mutate_if(is.numeric, coalesce, 0) %>% # Converts NAs in matches to 0
         mutate(Excess = Total - calHours) %>%
         rename('dayType' = 'Type') %>%  # Makes joins easier
         select(-Total) # Simplifies next join

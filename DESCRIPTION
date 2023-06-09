@@ -1,6 +1,6 @@
 Package: planThis
 Title: Create time sheets and carry out time recording activities
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: 
     person("Jonathan", "Payne", , "jon.payne@environment-agency.gov.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2551-5353"))
@@ -15,4 +15,5 @@ Imports:
     magrittr,
     readr,
     readxl,
-    tidyr
+    tidyr, 
+    tibble
