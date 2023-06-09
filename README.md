@@ -59,6 +59,12 @@ Setting this up will be the most time consuming part of the process,
 however it only need to be done once. In the below pictures the
 `categories.csv` and outlook colour categories match up.
 
+The baseline category file can be produced with
+
+``` r
+planThis::createCatagsFile(path = 'file path to save location')
+```
+
 <div class="figure" style="text-align: center">
 
 <img src="pics/categoriesCsv.PNG" alt="Allignment of categories.csv and colour categories in outlook" width="49%" height="20%" /><img src="pics/colourCats.PNG" alt="Allignment of categories.csv and colour categories in outlook" width="49%" height="20%" />
@@ -76,19 +82,8 @@ Allignment of categories.csv and colour categories in outlook
 Now the `categories.csv` and colour categories are set up you will need
 to organise your outlook calendar.
 
-Each appointment you wish to have included in time recording requires a
-category.  
-**Anything left blank will not be incorporated.**
-
-You will need to export your calendar to use it in the tool, this takes
-seconds to do.
-
-> ***Calendar page on outlook*** ***\>\>*** ***file*** ***\>\>***
-> ***Open & Export*** ***\>\>*** ***Import/Export*** ***\>\>***
-> ***Export to a file*** ***\>\>*** ***Comma Separated Values***
-> ***\>\>*** ***Under your email adress click calendar (pic below)***
-> ***\>\>*** ***Insert Save location*** ***\>\>*** ***Export***
-> ***\>\>*** ***Set Date Range***
+The best way to do this is to set up Power Automate, so that it exports
+your calendar on a weekly basis.
 
 <div class="figure" style="text-align: center">
 
@@ -108,17 +103,15 @@ Following installation load the tool with:
 
 ``` r
 library(planThis)
-#> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
-#> loading 'planThis'
 ```
 
 Set your file locations with;
 
 ``` r
-path <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
-catags <- 'Categories_TCs.csv'
-dailHours <- 'Daily_hours.xlsx'
-outlC <- 'calendar_appoints3.csv'
+catags <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Categories_TCs.csv'
+dailHours <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Daily_hours.xlsx'
+outlC <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Calendar.xlsx'
+pathOTL <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
 weekS <- '2023-05-15'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
@@ -129,26 +122,30 @@ won’t export to the OTL form, using `export = FALSE`, and will instead
 print the time card data into the console.
 
 ``` r
-tCard <- createTC(file_path = path,
-                  categories = catags,
+tCard <- createTC(categories = catags,
                   daily = dailHours,
                   outCal = outlC,
                   week_start = weekS,
                   split = tasks,
                   weight = weightings,
+                  pathOTL = path,
                   export = FALSE)
+#> 
+#> All tasks match the Categories file
 print(tCard)
-#> # A tibble: 8 x 11
-#>   Code             Task  Type  hours~1   Mon   Tue   Wed   Thu   Fri   Sat   Sun
-#>   <chr>            <chr> <chr> <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 ENVABE           1     STAF~ ""        7.4   2.4  0      0     0       0     0
-#> 2 ENVEGM5.1.1      990   STAF~ ""        0     0.5  0      0     0       0     0
-#> 3 ENVHOABCPC120    03    STAF~ ""        0     0.6  2.98   1.4   2.1     0     0
-#> 4 ENVIMR001016B00C CWEIY STAF~ ""        0     2.5  3.3    3.5   3.4     0     0
-#> 5 ENVHOABCPC119    02    STAF~ ""        0     1.4  1.8    2.1   2       0     0
-#> 6 ENVHOABCPC123    04    STAF~ ""        0     0    0      0.5   0       0     0
-#> 7 ENVHOABCPC120    01    STAF~ ""        0     0    0      0.5   0       0     0
-#> 8 ENVEGM5.16       010   STAF~ ""        0     0    0      0     0.5     0     0
+#> # A tibble: 10 x 11
+#>    Code            Task  Type  hours~1   Mon   Tue   Wed   Thu   Fri   Sat   Sun
+#>    <chr>           <chr> <chr> <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#>  1 ENVHOABCPC076   03    STAF~ ""          1   2    0      0     0       0     0
+#>  2 ENVIMR001016B0~ CWEIY STAF~ ""          5   2.9  1.2    1.9   3.8     0     0
+#>  3 ENVEGM4.3       901   STAF~ ""          1   0    0      0     0       0     0
+#>  4 ENVHOABCPC120   01    STAF~ ""          1   0    0      1.5   0       0     0
+#>  5 ENVHOABCPC120   990   STAF~ ""          0   0.5  0      0     0       0     0
+#>  6 ENVEGM5.1.1     990   STAF~ ""          0   0.5  4      0     0       0     0
+#>  7 ENVHOABCPC120   03    STAF~ ""          0   0.7  1.88   2.6   2.1     0     0
+#>  8 ENVHOABCPC119   02    STAF~ ""          0   1.4  1      1.5   1.6     0     0
+#>  9 ENVHOABCPC123   04    STAF~ ""          0   0    0      0.5   0       0     0
+#> 10 ENVEGM5.16      010   STAF~ ""          0   0    0      0     0.5     0     0
 #> # ... with abbreviated variable name 1: hoursType
 ```
 
@@ -157,13 +154,13 @@ location of the format OTL\_*`week_start`*. In the example below the
 exported file is **OTL\_2023-05-15**
 
 ``` r
-tCard <- createTC(file_path = path,
-                  categories = catags,
+tCard <- createTC(categories = catags,
                   daily = dailHours,
                   outCal = outlC,
                   week_start = weekS,
                   split = tasks,
                   weight = weightings,
+                  pathOTL = path,
                   export = TRUE)
 ```
 

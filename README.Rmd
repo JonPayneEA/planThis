@@ -61,6 +61,11 @@ Categories data are essential for linking appointments in outlook to a time code
 
 Setting this up will be the most time consuming part of the process, however it only need to be done once. In the below pictures the `categories.csv` and outlook colour categories match up.
 
+The baseline category file can be produced with 
+```{r cats, eval = FALSE}
+planThis::createCatagsFile(path = 'file path to save location')
+```
+
 ```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Allignment of categories.csv and colour categories in outlook",fig.show='hold',fig.align='center'}
 knitr::include_graphics(c("pics/categoriesCsv.PNG","pics/colourCats.PNG"))
 ``` 
@@ -69,12 +74,8 @@ knitr::include_graphics(c("pics/categoriesCsv.PNG","pics/colourCats.PNG"))
 
 Now the `categories.csv` and colour categories are set up you will need to organise your outlook calendar.  
 
-Each appointment you wish to have included in time recording requires a category.  
-**Anything left blank will not be incorporated.**  
+The best way to do this is to set up Power Automate, so that it exports your calendar on a weekly basis.
 
-You will need to export your calendar to use it in the tool, this takes seconds to do.   
-
->  **_Calendar page on outlook_** **_>>_** **_file_** **_>>_** **_Open & Export_** **_>>_** **_Import/Export_** **_>>_** **_Export to a file_** **_>>_** **_Comma Separated Values_** **_>>_** **_Under your email adress click calendar (pic below)_** **_>>_** **_Insert Save location_** **_>>_** **_Export_** **_>>_** **_Set Date Range_**
 
 ```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Outlook calendar export",fig.show='hold',fig.align='center'}
 knitr::include_graphics(c("pics/outlookExport1.png","pics/outlookExport2.png"))
@@ -91,21 +92,22 @@ library(planThis)
 Set your file locations with;
 
 ```{r files, eval=FALSE}
-path <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
-catags <- 'Categories_TCs.csv'
-dailHours <- 'Daily_hours.xlsx'
-outlC <- 'calendar_appoints3.csv'
+catags <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Categories_TCs.csv'
+dailHours <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Daily_hours.xlsx'
+outlC <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time/Calendar.xlsx'
+pathOTL <- 'C:/Users/jpizzle/DeskyMcDeskFace/Time'
 weekS <- '2023-05-15'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
 ```
 
+
 ```{r real paths, echo = FALSE}
-path <- 'C:/Users/jpayne05/Desktop/Time'
-catags <- 'Categories_TCs.csv'
-dailHours <- 'Daily_hours.xlsx'
-outlC <- 'calendar_appoints3.csv'
+catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
+dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
+outlC <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/Calendar/Calendar.xlsx'
 weekS <- '2023-05-15'
+path <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/OTL'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
 ```
@@ -114,13 +116,13 @@ To create the time card use the `createTC()` function. In the case we won't expo
 
 
 ```{r timecard}
-tCard <- createTC(file_path = path,
-                  categories = catags,
+tCard <- createTC(categories = catags,
                   daily = dailHours,
                   outCal = outlC,
                   week_start = weekS,
                   split = tasks,
                   weight = weightings,
+                  pathOTL = path,
                   export = FALSE)
 print(tCard)
 ```
@@ -128,13 +130,13 @@ print(tCard)
 When `export = TRUE` your OTL form will export into the `file_path` location of the format OTL_*`week_start`*. In the example below the exported file is **OTL_2023-05-15**
 
 ```{r otl, eval = FALSE}
-tCard <- createTC(file_path = path,
-                  categories = catags,
+tCard <- createTC(categories = catags,
                   daily = dailHours,
                   outCal = outlC,
                   week_start = weekS,
                   split = tasks,
                   weight = weightings,
+                  pathOTL = path,
                   export = TRUE)
 ```
 

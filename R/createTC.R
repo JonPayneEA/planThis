@@ -24,6 +24,7 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 #' @importFrom dplyr mutate_at
+#' @importFrom dplyr mutate_if
 #' @importFrom dplyr left_join
 #' @importFrom dplyr rename
 #' @importFrom dplyr relocate
@@ -34,6 +35,7 @@
 #' @importFrom dplyr coalesce
 #' @importFrom dplyr vars
 #' @importFrom dplyr slice
+#' @importFrom dplyr count
 #' @importFrom tidyr unnest
 #' @importFrom tidyr pivot_wider
 #'
