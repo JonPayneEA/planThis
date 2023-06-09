@@ -217,6 +217,17 @@ createTC <- function(categories = NULL,
 
   # Identify all day standard tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   adRow <- which(allTibSL$allDay == TRUE & allTibSL$dayType == 'Standard')
+
+  # Find the hours accounted for in the calendar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # All day events removed
+  calHours <- allTibSL %>%
+    slice(-adRow) %>%
+    group_by(Day, Date) %>%
+    summarise(calHours = sum(Length)) %>%
+    arrange(Date)
+
+
+  # Pull out the identified tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (!is.integer0(adRow)){
     ad <- allTibSL[adRow,]
     # Find the number of all day tasks per day
@@ -225,22 +236,28 @@ createTC <- function(categories = NULL,
       count()
 
     # Find excess hours to assign ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     suppressMessages(
-      summary <- allTibSL %>%
-        slice(-adRow) %>%
-        group_by(Day, Date) %>%
-        summarise(Hours = mean(Total), calTotal = sum(Length)) %>%
-        mutate(Excess = Hours - calTotal)
+      summary <- workWeek %>%
+        select(Day, Date, Type, Total) %>%
+        left_join(calHours) %>%
+        mutate_if(is.numeric,coalesce,0) %>% # Converts NAs in matches to 0
+        mutate(Excess = Total - calHours) %>%
+        rename('dayType' = 'Type') %>%  # Makes joins easier
+        select(-Total) # Simplifies next join
+
     )
 
     # Join 3 tables data and calculate split times ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     suppressMessages(
       adCor <- ad %>%
         left_join(multi) %>%
-        left_join(summary) %>%
-        mutate(Length = n * Excess) %>%
-        select(-n, -Hours, - calTotal, - Excess)
+        left_join(summary, by = c('Day', 'Date', 'dayType')) %>%
+
+        mutate(Length = Excess / n) %>%
+        select(-n, - calHours, - Excess)
     )
+
   # Merge split times and cleaned sick leave table ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   allTibad <- rbind(allTibSL[-adRow,], adCor)
   } else {
@@ -288,6 +305,7 @@ createTC <- function(categories = NULL,
                     Length = unlist(multinom),
                     allDay = rep(FALSE, length(Day)))
 
+  # Link to time codes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   catPad <- padding %>%
     left_join(catags, by = 'Categories') %>%
     select(-Description)
