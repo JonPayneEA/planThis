@@ -76,9 +76,11 @@ Now the `categories.csv` and colour categories are set up you will need to organ
 
 The best way to do this is to set up Power Automate, so that it exports your calendar on a weekly basis.
 
+More guidance will be coming in future on this.
+
 
 ```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Outlook calendar export",fig.show='hold',fig.align='center'}
-knitr::include_graphics(c("pics/outlookExport1.png","pics/outlookExport2.png"))
+knitr::include_graphics(c("pics/powerAutomate.png","pics/powerAutomate1.png"))
 ``` 
 
 ## Running planThis
@@ -142,3 +144,8 @@ tCard <- createTC(categories = catags,
 
 <img src="pics/OTL.PNG" align="centre" width="700" />
 
+## Batch files
+
+The tool can be set up as a batch file. With the automatic calendar imports all that is required for generating an OTL form is running the `.bat` file. Setting the `week_start = NULL`, will make the functions use the previous calendar week starting on Monday.
+
+<img src="pics/batch.PNG" align="centre" width="700" />
