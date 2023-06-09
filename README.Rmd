@@ -105,11 +105,11 @@ weightings <- c(1, 2, 1)
 
 
 ```{r real paths, echo = FALSE}
-catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
-dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
+catags <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/Categories/Categories_TCs.csv'
+dailHours <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/Daily_hours.xlsx'
 outlC <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/Calendar/Calendar.xlsx'
 weekS <- '2023-05-15'
-path <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/OTL'
+path <- 'C:/Users/jpayne05/OneDrive - Defra/Time_Recording/OTLs'
 tasks <- c('Cap Skills', 'FFIDP', 'Reactive Forecasting')
 weightings <- c(1, 2, 1)
 ```
