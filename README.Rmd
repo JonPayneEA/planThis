@@ -79,7 +79,7 @@ The best way to do this is to set up Power Automate, so that it exports your cal
 More guidance will be coming in future on this.
 
 
-```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Outlook calendar export",fig.show='hold',fig.align='center'}
+```{r powerAut, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Power Automate export process",fig.show='hold',fig.align='center'}
 knitr::include_graphics(c("pics/powerAutomate.png","pics/powerAutomate1.png"))
 ``` 
 
