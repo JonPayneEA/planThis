@@ -70,7 +70,7 @@ planThis::createCatagsFile(path = 'file path to save location')
 knitr::include_graphics(c("pics/categoriesCsv.PNG","pics/colourCats.PNG"))
 ``` 
 
-### Outlook calendar
+### Outlook calendar and Power Automate
 
 Now the `categories.csv` and colour categories are set up you will need to organise your outlook calendar.  
 
