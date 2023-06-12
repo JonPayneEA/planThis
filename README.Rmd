@@ -80,7 +80,7 @@ More guidance will be coming in future on this.
 
 
 ```{r powerAut, echo=FALSE,out.width="49%", out.height="20%",fig.cap="Power Automate export process",fig.show='hold',fig.align='center'}
-knitr::include_graphics(c("pics/powerAutomate.png","pics/powerAutomate1.png"))
+knitr::include_graphics(c("pics/powerAutomate.PNG","pics/powerAutomate1.PNG"))
 ``` 
 
 ## Running planThis

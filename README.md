@@ -89,7 +89,7 @@ More guidance will be coming in future on this.
 
 <div class="figure" style="text-align: center">
 
-<img src="pics/powerAutomate.png" alt="Power Automate export process" width="49%" height="20%" /><img src="pics/powerAutomate1.png" alt="Power Automate export process" width="49%" height="20%" />
+<img src="pics/powerAutomate.PNG" alt="Power Automate export process" width="49%" height="20%" /><img src="pics/powerAutomate1.PNG" alt="Power Automate export process" width="49%" height="20%" />
 
 <p class="caption">
 
@@ -139,13 +139,13 @@ print(tCard)
 #>    Code            Task  Type  hours~1   Mon   Tue   Wed   Thu   Fri   Sat   Sun
 #>    <chr>           <chr> <chr> <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #>  1 ENVHOABCPC076   03    STAF~ ""          1   2    0      0     0       0     0
-#>  2 ENVIMR001016B0~ CWEIY STAF~ ""          5   2    1.3    2.6   3.4     0     0
+#>  2 ENVIMR001016B0~ CWEIY STAF~ ""          5   2.7  0.9    2.2   3.9     0     0
 #>  3 ENVEGM4.3       901   STAF~ ""          1   0    0      0     0       0     0
 #>  4 ENVHOABCPC120   01    STAF~ ""          1   0    0      1.5   0       0     0
 #>  5 ENVHOABCPC120   990   STAF~ ""          0   0.5  0      0     0       0     0
 #>  6 ENVEGM5.1.1     990   STAF~ ""          0   0.5  4      0     0       0     0
-#>  7 ENVHOABCPC120   03    STAF~ ""          0   1    1.68   2.2   2.4     0     0
-#>  8 ENVHOABCPC119   02    STAF~ ""          0   2    1.1    1.2   1.7     0     0
+#>  7 ENVHOABCPC120   03    STAF~ ""          0   1.4  1.88   2.5   2       0     0
+#>  8 ENVHOABCPC119   02    STAF~ ""          0   0.9  1.3    1.3   1.6     0     0
 #>  9 ENVHOABCPC123   04    STAF~ ""          0   0    0      0.5   0       0     0
 #> 10 ENVEGM5.16      010   STAF~ ""          0   0    0      0     0.5     0     0
 #> # ... with abbreviated variable name 1: hoursType
