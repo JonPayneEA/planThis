@@ -17,6 +17,9 @@ ggplot bar chart to detail where OTL is falling
 \description{
 Plotting OTL data
 }
+\details{
+Produces a bar plot for OTL data of class 'totalOTLs'
+}
 \examples{
 \dontrun{
 plot(dt1)

@@ -1,5 +1,7 @@
 #' @title Plotting OTL data
 #'
+#' @details Produces a bar plot for OTL data of class 'totalOTLs'
+#'
 #' @param x Dataset derived from mergeOTL() function
 #' @param ... Other options passed to ggplot(., aes())
 #' @method plot totalsOTL
