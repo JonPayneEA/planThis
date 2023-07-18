@@ -11,9 +11,6 @@ toTime(x, na.rm = FALSE)
 
 \item{na.rm}{Set as TRUE}
 }
-\value{
-
-}
 \description{
 Convert excel "time" into R compatable time
 }

@@ -11,9 +11,6 @@ toHMS(x, na.rm = FALSE)
 
 \item{na.rm}{Set as TRUE}
 }
-\value{
-
-}
 \description{
 Convert times to hms (hours minutes seconds)
 }
