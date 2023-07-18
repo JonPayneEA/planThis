@@ -17,7 +17,7 @@
 #' plot(dt1)
 #' }
 plot.mergedOTLs <- function(x, ...){
-  p <- ggplot2::ggplot(x, ggplot2::aes(y = Sum, x = Categories, fill = Categories, ...)) +
+  p <- ggplot2::ggplot(x, ggplot2::aes(y = Hours, x = Categories, fill = Categories, ...)) +
     ggplot2::geom_bar(stat = "identity")
   return(p)
 }
