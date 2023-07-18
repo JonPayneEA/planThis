@@ -2,7 +2,7 @@
 #'
 #' @param x Dataset derived from mergeOTL() function
 #' @param ... Other options passed to ggplot(., aes())
-#'
+#' @method plot mergedOTLs
 #' @return ggplot bar chart to detail where OTL is falling
 #' @export
 #'
@@ -14,21 +14,7 @@
 #' \dontrun{
 #' plot(dt1)
 #' }
-plot <- function(x, ...) {
-  UseMethod('plot', x)
-}
-
-#' @rdname plot
-#' @method plot totalOTLs
-plot.totalOTLs <- function(x, ...){
-  p <- ggplot2::ggplot(x, ggplot2::aes(y = Sum, x = Categories, fill = Categories, ...)) +
-    ggplot2::geom_bar(stat = "identity")
-  return(p)
-}
-
-#' @rdname plot
-#' @method plot mergedOTLs
-plot.mergedOTLs <- function(x){
+plot.mergedOTLs <- function(x, ...){
   p <- ggplot2::ggplot(x, ggplot2::aes(y = Sum, x = Categories, fill = Categories, ...)) +
     ggplot2::geom_bar(stat = "identity")
   return(p)

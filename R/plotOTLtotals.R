@@ -1,0 +1,21 @@
+#' @title Plotting OTL data
+#'
+#' @param x Dataset derived from mergeOTL() function
+#' @param ... Other options passed to ggplot(., aes())
+#' @method plot totalsOTL
+#' @return ggplot bar chart to detail where OTL is falling
+#' @export
+#'
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_bar
+#'
+#' @examples
+#' \dontrun{
+#' plot(dt1)
+#' }
+plot.totalOTLs <- function(x, ...){
+  p <- ggplot2::ggplot(x, ggplot2::aes(y = Sum, x = Categories, fill = Categories, ...)) +
+    ggplot2::geom_bar(stat = "identity")
+  return(p)
+}
