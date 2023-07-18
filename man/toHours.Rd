@@ -11,6 +11,9 @@ toHours(x, na.rm = FALSE)
 
 \item{na.rm}{Set as TRUE}
 }
+\value{
+Seconds in a numeric form
+}
 \description{
 Convert hms to seconds
 }

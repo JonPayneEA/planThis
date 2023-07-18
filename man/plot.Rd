@@ -8,18 +8,23 @@
 \usage{
 plot(x, ...)
 
-\method{plot}{totalOTLs}(x)
+\method{plot}{totalOTLs}(x, ...)
 
 \method{plot}{mergedOTLs}(x)
 }
 \arguments{
-\item{x}{Dataset derived from mergeOTL function}
+\item{x}{Dataset derived from mergeOTL() function}
 
-\item{...}{Additional parameters as required}
+\item{...}{Other options passed to ggplot(., aes())}
+}
+\value{
+ggplot bar chart to detail where OTL is falling
 }
 \description{
 Plotting OTL data
 }
 \examples{
+\dontrun{
 plot(dt1)
+}
 }

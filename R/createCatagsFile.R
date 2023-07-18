@@ -6,7 +6,7 @@
 #'
 #' @import tibble
 #'
-#' @return
+#' @return A csv of common category files is produced
 #' @export
 #'
 #' @examples

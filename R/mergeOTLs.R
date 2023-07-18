@@ -5,13 +5,12 @@
 #' @param quarterYear Set to 'all', this compiles all OTLs. If you set to 'current' it will compile all the OTLs that are in the same quarter as sys.Date(). To specify a quarter set to the format of 'Qx yyyy' e.g. 'Q1 2023'.
 #' @param aggregate Set to FALSE. If TRUE it will sum all the ours spent on each category.
 #'
-#' @return
+#' @return All OTL files merged into one table
 #' @export
 #'
-#' @import data.table
 #' @importFrom magrittr %>%
 #' @importFrom data.table data.table
-#' @importFrom data.table merge
+#' @importFrom data.table merge.data.table
 #' @importFrom data.table rbindlist
 #' @importFrom lubridate quarter
 #' @importFrom lubridate year

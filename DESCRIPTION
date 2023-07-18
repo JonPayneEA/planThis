@@ -16,4 +16,6 @@ Imports:
     readr,
     readxl,
     tidyr, 
-    tibble
+    tibble,
+    data.table,
+    ggplot2

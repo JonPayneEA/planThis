@@ -15,6 +15,9 @@ mergeOTL(folderOTL, category, quarterYear = "all", aggregate = FALSE)
 
 \item{aggregate}{Set to FALSE. If TRUE it will sum all the ours spent on each category.}
 }
+\value{
+All OTL files merged into one table
+}
 \description{
 Compile OTL data
 }

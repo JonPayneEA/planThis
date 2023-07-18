@@ -11,7 +11,7 @@
 #' @param pathOTL Link to folder where you wish the OTL data to be exported to
 #' @param export Set as True - saves the OTL form in your pathOTL folder
 #'
-#' @return
+#' @return A time card in csv format
 #' @export
 #'
 #' @import tibble
@@ -40,6 +40,8 @@
 #' @importFrom tidyr pivot_wider
 #'
 #' @examples
+#'
+#' \dontrun{
 #' catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
 #' dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
 #' outlC <- 'C:/Users/jpayne05/Desktop/Time/calendar_appoints3.csv'
@@ -53,9 +55,9 @@
 #'                week_start = week,
 #'                split = tasks,
 #'                weight = weightings,
-#'                file_path = folder,
 #'                export = FALSE)
 #' tc
+#' }
 createTC <- function(categories = NULL,
                      daily = NULL,
                      outCal = NULL,

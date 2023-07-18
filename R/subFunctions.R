@@ -2,7 +2,7 @@
 #'
 #' @param x Data of interest
 #'
-#' @return
+#' @return A TRUE/FALSE is returned detailing whetherr the crriteria have been met
 #' @export
 #'
 #' @examples
@@ -13,12 +13,12 @@ is.integer0 <- function(x){
 }
 
 
-#' @title Convert excel "time" into R compatable time
+#' @title Convert excel "time" into R compatible time
 #'
 #' @param x Data of interest
 #' @param na.rm Set as TRUE
 #'
-#' @return
+#' @return Converted excel time to R time
 #' @export
 #'
 #' @examples
@@ -36,7 +36,7 @@ toTime <- function(x, na.rm = FALSE){
 #'
 #' @importFrom lubridate hms
 #'
-#' @return
+#' @return HMS times
 #' @export
 #'
 #' @examples
@@ -53,7 +53,7 @@ toHMS <- function(x, na.rm = FALSE){
 #'
 #' @importFrom lubridate period_to_seconds
 #'
-#' @return
+#' @return Seconds in a numeric form
 #' @export
 #'
 #' @examples
@@ -67,7 +67,7 @@ toHours <- function(x, na.rm = FALSE){
 #'
 #' @description This function looks back over the past 70 days and draws out dates that fall on Monday.
 #'
-#' @return
+#' @return A vector of Monday dates from the previous 70 days
 #' @export
 #'
 #' @examples

@@ -32,10 +32,15 @@ createTC(
 
 \item{export}{Set as True - saves the OTL form in your pathOTL folder}
 }
+\value{
+A time card in csv format
+}
 \description{
 Function that links daily hours to outlook calendars to produce an OTL form
 }
 \examples{
+
+\dontrun{
 catags <- 'C:/Users/jpayne05/Desktop/Time/Categories_TCs.csv'
 dailHours <- 'C:/Users/jpayne05/Desktop/Time/Daily_hours.xlsx'
 outlC <- 'C:/Users/jpayne05/Desktop/Time/calendar_appoints3.csv'
@@ -49,7 +54,7 @@ tc <- createTC(categories = categories,
                week_start = week,
                split = tasks,
                weight = weightings,
-               file_path = folder,
                export = FALSE)
 tc
+}
 }

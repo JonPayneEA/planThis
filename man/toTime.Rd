@@ -2,7 +2,7 @@
 % Please edit documentation in R/subFunctions.R
 \name{toTime}
 \alias{toTime}
-\title{Convert excel "time" into R compatable time}
+\title{Convert excel "time" into R compatible time}
 \usage{
 toTime(x, na.rm = FALSE)
 }
@@ -11,8 +11,11 @@ toTime(x, na.rm = FALSE)
 
 \item{na.rm}{Set as TRUE}
 }
+\value{
+Converted excel time to R time
+}
 \description{
-Convert excel "time" into R compatable time
+Convert excel "time" into R compatible time
 }
 \examples{
 # Leave blank
