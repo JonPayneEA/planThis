@@ -4,7 +4,7 @@
 #'
 #' @param path File path of where you wish the categories file to be saved
 #'
-#' @import tibble
+#' @importFrom  tibble tibble
 #'
 #' @return A csv of common category files is produced
 #' @export

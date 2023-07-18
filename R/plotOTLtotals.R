@@ -4,7 +4,7 @@
 #'
 #' @param x Dataset derived from mergeOTL() function
 #' @param ... Other options passed to ggplot(., aes())
-#' @method plot totalsOTL
+#' @method plot totalOTLs
 #' @return ggplot bar chart to detail where OTL is falling
 #' @export
 #'

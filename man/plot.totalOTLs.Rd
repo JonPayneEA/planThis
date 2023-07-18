@@ -4,7 +4,7 @@
 \alias{plot.totalOTLs}
 \title{Plotting OTL data}
 \usage{
-\method{plot}{totalsOTL}(x, ...)
+\method{plot}{totalOTLs}(x, ...)
 }
 \arguments{
 \item{x}{Dataset derived from mergeOTL() function}

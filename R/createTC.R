@@ -14,7 +14,7 @@
 #' @return A time card in csv format
 #' @export
 #'
-#' @import tibble
+#' @importFrom tibble tibble
 #' @importFrom magrittr %>%
 #' @importFrom lubridate hms
 #' @importFrom lubridate period_to_seconds
@@ -316,14 +316,14 @@ createTC <- function(categories = NULL,
                                prob = rep(1/catL, catL))/10
   }
 
-  padding <- tibble(Day = rep(finalSum$Day, each = catL),
-                    Date = rep(finalSum$Date, each = catL),
-                    dayType = rep(finalSum$dayType, each = catL),
-                    Subject = rep(cats, times = dim(finalSum)[1]),
-                    Categories = rep(cats, times = dim(finalSum)[1]),
-                    Total = rep(finalSum$Hours, each = catL),
-                    Length = unlist(multinom),
-                    allDay = rep(FALSE, length(Day)))
+  padding <- tibble::tibble(Day = rep(finalSum$Day, each = catL),
+                            Date = rep(finalSum$Date, each = catL),
+                            dayType = rep(finalSum$dayType, each = catL),
+                            Subject = rep(cats, times = dim(finalSum)[1]),
+                            Categories = rep(cats, times = dim(finalSum)[1]),
+                            Total = rep(finalSum$Hours, each = catL),
+                            Length = unlist(multinom),
+                            allDay = rep(FALSE, length(Day)))
 
   # Link to time codes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   catPad <- padding %>%
