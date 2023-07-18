@@ -6,9 +6,6 @@
 \usage{
 getRecentMondays()
 }
-\value{
-
-}
 \description{
 This function looks back over the past 70 days and draws out dates that fall on Monday.
 }

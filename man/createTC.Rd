@@ -32,9 +32,6 @@ createTC(
 
 \item{export}{Set as True - saves the OTL form in your pathOTL folder}
 }
-\value{
-
-}
 \description{
 Function that links daily hours to outlook calendars to produce an OTL form
 }

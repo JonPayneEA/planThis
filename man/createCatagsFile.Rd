@@ -9,9 +9,6 @@ createCatagsFile(path = NULL)
 \arguments{
 \item{path}{File path of where you wish the categories file to be saved}
 }
-\value{
-
-}
 \description{
 Set up a category file that then can be used with the creatTC function.
 }

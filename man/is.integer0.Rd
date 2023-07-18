@@ -9,9 +9,6 @@ is.integer0(x)
 \arguments{
 \item{x}{Data of interest}
 }
-\value{
-
-}
 \description{
 Find whether data are integer(0)
 }
