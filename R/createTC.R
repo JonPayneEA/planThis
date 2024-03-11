@@ -140,7 +140,7 @@ createTC <- function(categories = NULL,
   suppressMessages(
     sleaveTC <- sleave %>%
       filter(Type %in% c('Leave', 'Sick', 'Leave Half', 'Sick Half',
-                         'Bank Holiday')) %>%
+                         'Bank Holiday', 'Other')) %>%
       mutate(allDay = ifelse(Length == 7.4 | Length == 0, TRUE, FALSE)) %>%
       rename(dayType = Type) %>%
       left_join(catags, by = c('dayType' = 'Categories')) %>%
@@ -220,6 +220,7 @@ createTC <- function(categories = NULL,
   slRow <- which(allTib$allDay == TRUE &
                    ((allTib$dayType == 'Sick' & allTib$Subject == 'Sick') |
                       (allTib$dayType == 'Leave' & allTib$Subject == 'Leave') |
+                      (allTib$dayType == 'Other' & allTib$Subject == 'Other') |
                       (allTib$dayType == 'Bank Holiday' &
                          allTib$Subject == 'Bank Holiday')))
 
@@ -259,7 +260,7 @@ createTC <- function(categories = NULL,
 
     suppressMessages(
       summary <- workWeek %>%
-        select(Day, Date, Type, Total) %>%
+        select(Day, Date, dayType, Total) %>%
         left_join(calHours) %>%
         mutate_if(is.numeric, coalesce, 0) %>% # Converts NAs in matches to 0
         mutate(Excess = Total - calHours) %>%
@@ -349,15 +350,15 @@ createTC <- function(categories = NULL,
     neo[1,1] <- 'ORACLE TIME & LABOR'
     neo[3,2] <- 'Template Name : ABC'
     neo[5:7, 2] <- c('In the START_HEADER - STOP_HEADER section you can:',
-                     '1. Select an overriding approver from the POSSIBLE VALUES list.',
-                     '2. Enter comments being careful not to use a comma - enclose all details containing comma within double quotes.')
+                     ' 1. Select an overriding approver from the POSSIBLE VALUES list.',
+                     ' 2. Enter comments being careful not to use a comma - enclose all details containing comma within double quotes.')
     neo[9, 1] <- 'In the START_TEMPLATE - STOP_TEMPLATE section you can:'
-    neo[10:15, 2] <- c('1. Delete an entire timecard line entry. Use the delete line function in the spreadsheet.',
-                       '2. Modify/Edit an hours entered.  Make your entry in the appropriate cell.',
-                       '3. Insert a new entry - above the STOP_TEMPLATE (reserved line).',
-                       'Use the insert line function in the spreadsheet.',
-                       '4. Select POSSIBLE VALUES corresponding to the appropriate column headings.',
-                       '5. Enter comments being careful not to use a comma - enclose all details containing comma within double quotes.')
+    neo[10:15, 2] <- c(' 1. Delete an entire timecard line entry. Use the delete line function in the spreadsheet.',
+                       ' 2. Modify/Edit an hours entered.  Make your entry in the appropriate cell.',
+                       ' 3. Insert a new entry - above the STOP_TEMPLATE (reserved line).  ',
+                       '    Use the insert line function in the spreadsheet.',
+                       ' 4. Select POSSIBLE VALUES corresponding to the appropriate column headings.',
+                       ' 5. Enter comments being careful not to use a comma - enclose all details containing comma within double quotes.')
 
     neo[17:19, 2] <- c(' DO NOT Make entries outside of the START_HEADER - STOP_HEADER or ',
                        ' START_TEMPLATE - STOP_TEMPLATE section.',
@@ -372,7 +373,7 @@ createTC <- function(categories = NULL,
     tsMat <- as.matrix(ts)
     matrows <- length(tsMat[,1])
     neo[30:(29 + matrows), 1:11] <- tsMat
-    # Adding an ' infront of taks, when exporting to csv leading zeros get dropped
+    # Adding an ' in front of task, when exporting to csv leading zeros get dropped
     # neo[30:(29 + matrows), 2] <- paste0("'",  neo[30:(29 + matrows), 2])
     neo[29, 12] <- 'END_COLUMN'
 

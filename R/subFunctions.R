@@ -42,7 +42,7 @@ toTime <- function(x, na.rm = FALSE){
 #' @examples
 #' # Leave blank
 toHMS <- function(x, na.rm = FALSE){
-  (hms(toTime(x)))
+  (lubridate::hms(toTime(x)))
 }
 
 
@@ -59,7 +59,7 @@ toHMS <- function(x, na.rm = FALSE){
 #' @examples
 #' # Leave blank
 toHours <- function(x, na.rm = FALSE){
-  (as.numeric(period_to_seconds(x) / 3600))
+  (as.numeric(lubridate::period_to_seconds(x) / 3600))
 }
 
 
@@ -78,3 +78,24 @@ getRecentMondays <- function(){
   mons <- days[days$wday==1]
   as.Date(mons[!is.na(mons)])
 }
+
+
+#' @title Fix excel timing issues
+#'
+#' @description This function fixes some of the excel related timing problems, date and star/end times are merged and converted to class POSIXct
+#'
+#' @param date Date parameter
+#' @param endStart Start or End time
+#'
+#' @return A POSIXct date-time is exported
+#' @export
+#'
+#' @examples
+#' fixTimes(Sys.Date(), '11:00')
+fixTimes <- function(date, endStart){
+  time <- toTime(endStart)
+  dateTime <- ifelse(is.na(time), NA, paste(date, time))
+  dateTime <- as.POSIXct(dateTime, origin="1970-01-01")
+  return(dateTime)
+}
+
